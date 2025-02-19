@@ -62,12 +62,51 @@ specifically in the [`syn-bencher/benches`](syn-bencher/benches) directory.
 
 ### Build times
 
-TODO!
+You can find the `timings` reports in the [`timings`](timings) directory. Here follows the table illustrating the build
+times for each of the crates, both in debug and release mode. Note that since the first `cargo build` command also loads
+the documents in memory, the first run takes longer than the subsequent ones - for this reason, we have run the `cargo build --timings`
+command twice for each crate. Between all of the `cargo build` runs, we have run `cargo clean` to ensure that the build times
+are not affected by the previous builds, as otherwise the build times become extremely small as effectively there is nothing
+more to be built. We only report the results of the second run, which is free of the overhead of loading the documents in memory.
+
+| Crate | Debug (s) | Release (s) |
+|-------|-----------|-------------|
+| [`using-syn-full`](using-syn-full) | [0.9](timings/using-syn-full.debug.html) | [1.5](timings/using-syn-full.release.html) |
+| [`using-syn-partial`](using-syn-partial) | [0.9](timings/using-syn-partial.debug.html) | [1.1](timings/using-syn-partial.release.html) |
+| [`using-no-parsing-full-syn`](using-no-parsing-full-syn) | [0.9](timings/using-no-parsing-full-syn.debug.html) | [1.6](timings/using-no-parsing-full-syn.release.html) |
+
+Surprisingly enough, the build times are not significantly different between the different strategies. Even more surprisingly, the crate with the largest build time requirements is the one that uses the `syn` APIs directly without use of the `quote!` macro.
 
 ### Binary sizes
 
-TODO!
+In this section, we present the sizes of the generated binaries for each of the crates. The sizes are measured using the `ls -lh` command, for both the debug and release builds. No particular build flags are used to optimize for size.
+
+| Crate | Size (debug) | Size (release) |
+|-------|--------------|----------------|
+| [`using-syn-full`](using-syn-full) | 793K | 272K |
+| [`using-syn-partial`](using-syn-partial) | 793K | 273K |
+| [`using-no-parsing-full-syn`](using-no-parsing-full-syn) | 1.5M | 387K |
+
+Unexpectedly, we find again that the crate that uses the `syn` APIs directly without the `quote!` macro generates the largest binary. This is surprising, as we would expect the crate that uses the `quote!` macro to generate the largest binary, as it includes the `quote!` macro itself.
 
 ### Execution times
 
-TODO!
+In this section, we present the execution times for the code-generation code. The benchmarks are run using the `cargo bench` command, and are based on criterion. The benchmarks are found in the [`syn-bencher/benches`](syn-bencher/benches) directory.
+
+| Crate | Time (ms) |
+|-------|-----------|
+| [`using-syn-full`](using-syn-full) | 8.44 |
+| [`using-syn-partial`](using-syn-partial) | 8.63 |
+| [`using-no-parsing-full-syn`](using-no-parsing-full-syn) | 9.42 |
+
+Again, unexpectedly, the crate that uses the `syn` APIs directly without the `quote!` macro generates the slowest code-generation code. This is surprising, as we would expect the crate that uses the `quote!` macro to generate the slowest code-generation code, as it includes the `quote!` macro itself.
+
+## Conclusions
+
+Our experiments compared different approaches to generating Rust code with Syn, measuring build times, binary sizes, and execution times. The results we obtained were somewhat unexpected.
+
+Build times were similar across strategies, with manual `TokenStream` handling (`using-no-parsing-full-syn`) taking the longest, contradicting expectations. Binary size analysis showed that this approach also produced the largest binaries, despite assumptions that `quote!` would be more bloated.
+
+Execution of `criterion`-based benchmarks revealed that manual `TokenStream` construction was the slowest, challenging the idea that avoiding `quote!` improves efficiency. Instead, manually managing tokens introduced overhead.
+
+Overall, using `quote!` with Syn—even with all features—provides a balanced trade-off between build time, binary size, and runtime performance. Manual `TokenStream` handling does not offer clear advantages and may introduce inefficiencies. Future work should investigate why direct token manipulation results in larger, slower binaries and explore alternative optimizations.
