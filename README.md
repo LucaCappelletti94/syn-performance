@@ -83,9 +83,9 @@ In this section, we present the sizes of the generated binaries for each of the 
 
 | Crate | Size (debug) | Size (release) |
 |-------|--------------|----------------|
-| [`using-syn-full`](using-syn-full) | 793K | 272K |
-| [`using-syn-partial`](using-syn-partial) | 793K | 273K |
-| [`using-no-parsing-full-syn`](using-no-parsing-full-syn) | 1.5M | 387K |
+| [`using-syn-full`](using-syn-full) | 793KB | 272KB |
+| [`using-syn-partial`](using-syn-partial) | 793KB | 273KB |
+| [`using-no-parsing-full-syn`](using-no-parsing-full-syn) | 1.5MB | 387KB |
 
 Unexpectedly, we find again that the crate that uses the `syn` APIs directly without the `quote!` macro generates the largest binary. This is surprising, as we would expect the crate that uses the `quote!` macro to generate the largest binary, as it includes the `quote!` macro itself.
 
