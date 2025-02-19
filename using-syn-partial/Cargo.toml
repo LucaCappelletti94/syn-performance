@@ -1,0 +1,13 @@
+[package]
+name = "using-syn-partial"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+syn = "2.0"
+quote = "1.0"
+proc-macro2 = "1.0"
+shared.workspace = true
+
+[lints]
+workspace = true

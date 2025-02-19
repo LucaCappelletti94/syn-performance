@@ -1,0 +1,12 @@
+[package]
+name = "using-no-parsing-full-syn"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+syn = { version = "2.0", features = ["full"] }
+proc-macro2 = "1.0"
+shared.workspace = true
+
+[lints]
+workspace = true

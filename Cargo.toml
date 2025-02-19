@@ -1,0 +1,28 @@
+[workspace]
+resolver = "2"
+
+members = [
+	"shared",
+	"syn-bencher",
+	"using-no-parsing-full-syn",
+	"using-syn-full",
+	"using-syn-partial",
+]
+
+[workspace.dependencies]
+shared = { path = "shared" }
+syn-bencher = { path = "syn-bencher" }
+using-no-parsing-full-syn = { path = "using-no-parsing-full-syn" }
+using-syn-full = { path = "using-syn-full" }
+using-syn-partial = { path = "using-syn-partial" }
+
+[workspace.lints.rust]
+missing_docs = "forbid"
+unsafe_code = "forbid"
+unused_macro_rules = "forbid"
+unconditional_recursion = "forbid"
+unreachable_patterns = "forbid"
+unused_import_braces = "forbid"
+
+[workspace.lints.clippy]
+pedantic = "deny"
